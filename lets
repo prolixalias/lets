@@ -1,0 +1,53 @@
+#!/usr/bin/env zsh
+
+### Note:
+#
+#  defaults to wildcard unless hostname is provided
+#  hostname can include subdomain
+#
+###
+
+### Usage:
+#
+#  ./lets register operations@fervid.us
+#  ./lets request operations@fervid.us fervid.us
+#  ./lets request operations@fervid.us fervid.us puppetserver.localdev
+#  ./lets renew
+#
+### 
+
+### TODO:
+#
+#  wildcards with subdomains
+#
+###
+
+directive=$1
+email=$2
+domain=$3
+shortname=$4
+post_hook="sudo uptime"
+base_dir=`pwd`
+acme_server="https://acme-v02.api.letsencrypt.org/directory"
+
+if [[ "${#shorttname}" -ne "0" ]]; then
+  target="${shortname}.${domain}"
+else 
+  target="*.${domain}"
+fi
+
+case $directive in
+  "register")
+    certbot register --dns-route53 --logs-dir ${base_dir}/log/ --config-dir ${base_dir}/config/ --work-dir ${base_dir}/work/ --email ${email} --agree-tos --no-eff-email --server ${acme_server}
+    ;;
+  "request")
+    certbot certonly -d ${target} --dns-route53 --logs-dir ${base_dir}/log/ --config-dir ${base_dir}/config/ --work-dir ${base_dir}/work/ -m ${email} --agree-tos --non-interactive --server ${acme_server}
+   ;;
+  "renew")
+   certbot renew --dns-route53 --logs-dir ${base_dir}/log/ --config-dir ${base_dir}/config/ --work-dir ${base_dir}/work/ --non-interactive --server ${acme_server} --post-hook ${post_hook}
+   ;;
+ *)
+  print "Unrecognized directive: ${directive}"
+  exit 2
+  ;;
+esac
