@@ -7,7 +7,7 @@ ENV LANG=en_US.UTF-8
 
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y curl wget git zip unzip bash-completion build-essential ninja-build htop jq less locales man-db nano software-properties-common sudo time vim multitail lsof ssl-cert fish zsh && \
+    apt install -y python pip curl wget git zip unzip bash-completion build-essential ninja-build htop jq less locales man-db nano software-properties-common sudo time vim multitail lsof ssl-cert fish zsh && \
     locale-gen en_US.UTF-8 && \
     wget https://apt.puppet.com/puppet-tools-release-focal.deb && \
     wget https://apt.puppetlabs.com/puppet6-release-focal.deb && \
@@ -47,6 +47,7 @@ RUN sudo usermod -s $(which zsh) gitpod && \
     /opt/puppetlabs/puppet/bin/ruby -r yaml -e "puts ({'disabled' => true}).to_yaml" > /home/gitpod/.config/puppet/analytics.yml && \
     rm -f puppet6-release-bionic.deb puppet-tools-release-bionic.deb && \
     /opt/puppetlabs/puppet/bin/homesick clone --force prolixalias/dotfiles && \
-    /opt/puppetlabs/puppet/bin/homesick link --force
+    /opt/puppetlabs/puppet/bin/homesick link --force && \
+    pip install certbot-dns-route53
     # chown -R gitpod:gitpod /home/gitpod/.aws /home/gitpod/.ssh
 ENTRYPOINT /usr/bin/zsh
