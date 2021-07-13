@@ -17,8 +17,8 @@
 	],
 
 	"mounts": [
-		"source=${localEnv:HOME}/.aws,target=/home/gitpod/.aws,type=bind,consistency=cached",
-		"source=${localEnv:HOME}/.ssh,target=/home/gitpod/.ssh,type=bind,consistency=cached"
+		"source=${localEnv:HOME}/.aws,target=/home/localdev/.aws,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.ssh,target=/home/localdev/.ssh,type=bind,consistency=cached"
 	]
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
