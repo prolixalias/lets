@@ -1,16 +1,12 @@
-# base
+# base localdev
 
-FROM ubuntu:focal
+FROM ubuntu:focal AS base
 
 ARG DEBIAN_FRONTEND=noninteractive
-
 ENV LANG=en_US.UTF-8
-
-# root user
-
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y python pip curl wget git zip unzip bash-completion build-essential ninja-build htop jq less locales man-db nano software-properties-common sudo time vim multitail lsof ssl-cert fish zsh && \
+    apt install -y curl wget git zip unzip bash-completion build-essential ninja-build htop jq less locales man-db nano software-properties-common sudo time vim multitail lsof ssl-cert fish zsh && \
     locale-gen en_US.UTF-8 && \
     wget https://apt.puppet.com/puppet-tools-release-focal.deb && \
     wget https://apt.puppetlabs.com/puppet6-release-focal.deb && \
@@ -29,27 +25,21 @@ RUN apt update && \
     /opt/puppetlabs/puppet/bin/gem install homesick puppet-debugger hub -N && \
     ln -s /opt/puppetlabs/puppet/bin/homesick /usr/local/bin/homesick
 
-# localdev user
+FROM base AS user
 
 USER localdev
-
 ENV HOME=/home/localdev
-
 WORKDIR $HOME
-
-# sudo echo "Running 'sudo' for localdev: success" && \
-RUN echo 'sudo chown -R localdev:localdev ~/.aws ~/.ssh' > ~/.zshrc && \
-    echo 'if [[ ! -a ~/.homesick/repos/dotfiles ]]; then' >> ~/.zshrc && \
-    echo '  if [[ -x "$(command -v homesick)" ]]; then' >> ~/.zshrc && \
-    echo '    mkdir -p ~/.homesick/repos/' >> ~/.zshrc && \
-    echo '    cd ~/.homesick/repos' >> ~/.zshrc && \
-    echo '    git -c http.sslVerify=false clone --recurse-submodules -j2 git@github.com:prolixalias/dotfiles.git' >> ~/.zshrc && \
-    echo '    cd ~/.homesick/repos/dotfiles; git submodule update --init' >> ~/.zshrc && \
-    echo '    [[ -a ~/.homesick/repos/dotfiles ]] && homesick link --force' >> ~/.zshrc && \
-    echo '  fi' >> ~/.zshrc && \
-    echo 'fi' >> ~/.zshrc && \
-    echo 'source .zshrc' >> ~/.profile
-
+RUN sudo echo 'source .zshrc' >> ~/.profile
 COPY .zshrc /home/localdev/.zshrc
+
+FROM user as project
+
+RUN sudo apt update && \
+    sudo apt upgrade -y && \
+    sudo apt install -y python3-pip && \
+    sudo pip install certbot-dns-route53 && \
+    sudo apt clean && \
+    sudo rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT /usr/bin/zsh

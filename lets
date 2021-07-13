@@ -18,7 +18,7 @@
 
 ### TODO:
 #
-#  wildcards with subdomains
+#  wildcard subdomains
 #
 ###
 
@@ -30,9 +30,9 @@ post_hook="sudo uptime"
 base_dir=`pwd`
 acme_server="https://acme-v02.api.letsencrypt.org/directory"
 
-if [[ "${#shorttname}" -ne "0" ]]; then
+if [[ ${#shorttname} == 0 ]]; then
   target="${shortname}.${domain}"
-else 
+else
   target="*.${domain}"
 fi
 
