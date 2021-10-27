@@ -9,10 +9,10 @@
 
 ### Usage:
 #
-#  ./lets register operations@fervid.us
-#  ./lets request operations@fervid.us fervid.us
-#  ./lets request operations@fervid.us fervid.us puppetserver.localdev
-#  ./lets renew
+#  ./lets register operations@fervid.us # register this email address
+#  ./lets request operations@fervid.us fervid.us # request wildcard cert for this domain
+#  ./lets request operations@fervid.us fervid.us puppetserver.localdev # request puppetserver.localdev.fervid.us
+#  ./lets renew # renew existing, unexpired certs
 #
 ### 
 
